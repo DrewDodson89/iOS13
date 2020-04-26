@@ -10,8 +10,7 @@ import Foundation
 
 struct K {
     
-    static let itemCellID = "ToDoItemCell"
-    static let categoryCellID = "CategoryCell"
+    static let cellID = "Cell"
     static let defaultsID = "ToDoeyListArray"
     static let segueID = "goToItems"
     

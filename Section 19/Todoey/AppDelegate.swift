@@ -24,8 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             print("Error initializing with error \(error)")
         }
-        
+        //print(Realm.Configuration.defaultConfiguration.fileURL)
         return true
+        
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

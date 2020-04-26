@@ -9,7 +9,8 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController:  SwipeTableViewController {
+    
     
     var toDoItems: Results<Item>?
     let realm = try! Realm()
@@ -24,10 +25,11 @@ class ToDoListViewController: UITableViewController {
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 90.0
     }
-
-
-
+    
+    
+    
     //MARK: - UITableView required methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoItems?.count ?? 1
@@ -36,7 +38,8 @@ class ToDoListViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellID, for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.text = toDoItems?[indexPath.row].title ?? "No items."
         if let item = toDoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.isChecked ? .checkmark : .none
@@ -45,9 +48,10 @@ class ToDoListViewController: UITableViewController {
         }
         return cell
     }
-
-
-
+    
+    
+    
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let item = toDoItems?[indexPath.row] {
             do {
@@ -60,9 +64,9 @@ class ToDoListViewController: UITableViewController {
         }
         tableView.reloadData()
     }
-
-
-
+    
+    
+    
     //MARK: - Add new item pressed
     @IBAction func addNewItemPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -89,14 +93,33 @@ class ToDoListViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-
-
-
+    
+    
+    
     //MARK: - Load items from CoreData DB
     func loadItems() {
         toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
+
+
+
+    override func updateModel(at indexPath: IndexPath) {
+        if let itemToBeDeleted = toDoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(itemToBeDeleted)
+                }
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+    }
+
+
+
+
+//MARK: - FINAL } IN THE CLASS
 }
 
 
@@ -104,7 +127,7 @@ class ToDoListViewController: UITableViewController {
 //MARK: - Extension - UISearchBarDelegate
 extension ToDoListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text).sorted(byKeyPath: "title", ascending: true)
+        toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text ?? "").sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
