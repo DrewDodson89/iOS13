@@ -6,6 +6,8 @@
 //  Copyright © 2020 Arcalla.com. All rights reserved.
 //
 
+// YOU NEED THE MODEL FROM HERE: https://drive.google.com/uc?export=download&id=13v58uJqi_pAXKoBa2J7mZ7sLkaSRVUBb
+
 import UIKit
 import CoreML
 import Vision
